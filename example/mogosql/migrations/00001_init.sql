@@ -1,0 +1,13 @@
+-- +goose Up
+CREATE TABLE notes (
+    note_id UUID PRIMARY KEY,
+
+    title TEXT NOT NULL,
+    body TEXT NOT NULL,
+
+    created_at TIMESTAMPTZ NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMPTZ NOT NULL DEFAULT CURRENT_TIMESTAMP
+);
+
+-- +goose Down
+DROP TABLE notes;

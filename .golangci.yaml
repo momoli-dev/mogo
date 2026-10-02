@@ -1,0 +1,108 @@
+version: "2"
+linters:
+  default: all
+  disable:
+    - depguard
+    - wrapcheck
+    - varnamelen
+    - nlreturn
+    - wsl
+    - wsl_v5
+    - godox
+    - err113
+    - gomodguard
+    - exhaustruct
+    - noinlineerr
+  enable:
+    - gomodguard_v2
+    - exhaustruct_v5
+
+  settings:
+    mnd:
+      ignored-numbers: ["0", "1", "2", "3"]
+    errcheck:
+      exclude-functions:
+        - crypto/rand.Read # This only returns an error if the system's RNG fails.
+    gosec:
+      config:
+        G104:
+          rand:
+            - Read
+    cyclop:
+      max-complexity: 15
+    exhaustruct_v5:
+      ignore-patterns:
+        - ^net/http.Client$
+        - ^net/http.Cookie$
+        - ^net/http.Request$
+        - ^net/http.Response$
+        - ^net/http.Server$
+        - ^net/http.Transport$
+        - ^net/url.URL$
+        - ^os/exec.Cmd$
+        - ^reflect.StructField$
+        - ^testing/fstest.MapFile$
+        - ^redis.Options$
+        - ^github\.com/spf13/cobra\.Command$
+        - '^github\.com/danielgtaylor/huma/v2\.SecurityScheme$'
+        - '^github\.com/danielgtaylor/huma/v2\.Operation$'
+        - '^github\.com/go-chi/httplog/v3\.Options$'
+        - '^github\.com/go-chi/cors\.Options$'
+        - '^github\.com/redis/go-redis/v9\.Options$'
+        - '^github\.com/redis/go-redis/v9\.Options$'
+        - '^github\.com/golang-jwt/jwt/v5\.RegisteredClaims$'
+    revive:
+      enable-all-rules: true
+      rules:
+        # Useful for public library code:
+        - name: package-comments
+          disabled: false
+        - name: exported
+          disabled: false
+        - name: package-naming
+          disabled: false
+
+        - name: line-length-limit
+          disabled: false
+          arguments: [120]
+        - name: add-constant
+          disabled: true
+        - name: cyclomatic
+          disabled: true
+        - name: unhandled-error
+          disabled: true
+        - name: cognitive-complexity
+          disabled: true
+        - name: max-public-structs
+          disabled: true
+        - name: blank-imports
+          disabled: true
+        - name: function-length
+          disabled: true
+        - name: multiline-if-init
+          disabled: true
+    funlen:
+      lines: 120
+
+    # Useful for testing libraries locally before they are released:
+    gomoddirectives:
+      replace-local: true
+
+  exclusions:
+    rules:
+      - path: '_test\.go'
+        linters:
+          - funlen
+          - unqueryvet
+          - gosec
+          - revive
+
+formatters:
+  enable:
+    - gofmt
+    - golines
+    - goimports
+
+  settings:
+    golines:
+      max-len: 120
