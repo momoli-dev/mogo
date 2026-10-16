@@ -6,6 +6,7 @@ import (
 	"testing"
 	"time"
 
+	"github.com/momoli-dev/mogo/mogoredis"
 	"github.com/redis/go-redis/v9"
 	"github.com/stretchr/testify/require"
 )
@@ -14,21 +15,11 @@ import (
 func New(t *testing.T) *redis.Client {
 	t.Helper()
 
-	const (
-		redisDatabaseNumber = 15
-	)
-
-	client := redis.NewClient(
-		&redis.Options{
-			Addr: "localhost:6379",
-			DB:   redisDatabaseNumber,
-		},
-	)
-
 	ctx, cancel := context.WithTimeout(context.Background(), time.Second)
 	defer cancel()
 
-	require.NoError(t, client.Ping(ctx).Err())
+	client, err := mogoredis.NewClient(ctx, "redis://localhost:6379/15")
+	require.NoError(t, err)
 
 	t.Cleanup(func() {
 		closeErr := client.Close()

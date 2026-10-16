@@ -15,6 +15,7 @@ require (
 	github.com/peterldowns/pgtestdb/migrators/goosemigrator v0.1.1
 	github.com/pressly/goose/v3 v3.27.1
 	github.com/redis/go-redis/v9 v9.20.1
+	github.com/sethvargo/go-envconfig/v2 v2.0.0
 	github.com/stretchr/testify v1.12.1
 	github.com/twpayne/go-geom v1.5.7
 	github.com/twpayne/pgx-geom v1.0.0
