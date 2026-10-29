@@ -28,3 +28,20 @@ func New(t *testing.T) *redis.Client {
 
 	return client
 }
+
+// CleanupKeys deletes the given keys when the test finishes.
+func CleanupKeys(t *testing.T, client *redis.Client, keys ...string) {
+	t.Helper()
+
+	keys = append([]string(nil), keys...)
+	if len(keys) == 0 {
+		return
+	}
+
+	t.Cleanup(func() {
+		ctx, cancel := context.WithTimeout(context.WithoutCancel(t.Context()), time.Second)
+		defer cancel()
+
+		require.NoError(t, client.Del(ctx, keys...).Err())
+	})
+}
