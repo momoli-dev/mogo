@@ -2,12 +2,10 @@
 package mogosqltest
 
 import (
-	"context"
 	"io/fs"
 	"testing"
-	"time"
 
-	"github.com/jackc/pgx/v5"
+	"github.com/momoli-dev/mogo/mogosql"
 	"github.com/peterldowns/pgtestdb"
 	"github.com/peterldowns/pgtestdb/migrators/goosemigrator"
 	"github.com/stretchr/testify/require"
@@ -15,8 +13,8 @@ import (
 	_ "github.com/jackc/pgx/v5/stdlib"
 )
 
-// NewPostgres creates a migrated test database and registers connection cleanup.
-func NewPostgres(t *testing.T, migrationsFS fs.FS) *pgx.Conn {
+// NewPostgres creates an isolated, migrated test database and registers pool cleanup.
+func NewPostgres(t *testing.T, migrationsFS fs.FS) *mogosql.PostgresDB {
 	t.Helper()
 
 	conn, _ := NewPostgresWithConnURL(t, migrationsFS)
@@ -25,16 +23,15 @@ func NewPostgres(t *testing.T, migrationsFS fs.FS) *pgx.Conn {
 }
 
 // NewPostgresWithConnURL also returns the test database connection URL.
-func NewPostgresWithConnURL(t *testing.T, migrationsFS fs.FS) (*pgx.Conn, string) {
+func NewPostgresWithConnURL(t *testing.T, migrationsFS fs.FS) (*mogosql.PostgresDB, string) {
 	t.Helper()
 	ctx := t.Context()
 
 	const (
-		postgresUser         = "postgres"
-		postgresPassword     = "postgres"
-		postgresHost         = "localhost"
-		postgresPort         = "5432"
-		postgresCloseTimeout = 5 * time.Second
+		postgresUser     = "postgres"
+		postgresPassword = "postgres"
+		postgresHost     = "localhost"
+		postgresPort     = "5432"
 	)
 
 	dbconf := pgtestdb.Config{
@@ -57,13 +54,13 @@ func NewPostgresWithConnURL(t *testing.T, migrationsFS fs.FS) (*pgx.Conn, string
 	conf := pgtestdb.Custom(t, dbconf, m)
 	require.NotEqual(t, dbconf, conf)
 
-	conn, err := pgx.Connect(ctx, conf.URL())
+	conn, err := mogosql.NewPostgresDB(ctx, mogosql.PostgresDBParams{
+		ConnStr:    conf.URL(),
+		HasPostgis: false,
+	})
 	require.NoError(t, err)
 	t.Cleanup(func() {
-		closeCtx, cancel := context.WithTimeout(context.WithoutCancel(t.Context()), postgresCloseTimeout)
-		defer cancel()
-
-		err := conn.Close(closeCtx)
+		err := conn.Close()
 		require.NoError(t, err)
 	})
 
