@@ -1,4 +1,4 @@
-// Package main is an example of using all the mogo toolkit for a Go app.
+// Package main demonstrates application startup with HTTP, Huma, PostgreSQL, and Redis.
 package main
 
 import (
@@ -40,7 +40,7 @@ func run() error {
 
 	var c Config
 	if err := envconfig.Process(ctx, &c); err != nil {
-		return fmt.Errorf("process config: %w", err)
+		return fmt.Errorf("failed to envconfig.Process: %w", err)
 	}
 
 	// Create and configure your mux.
@@ -77,7 +77,7 @@ func run() error {
 
 	rdb, err := mogoredis.NewClient(ctx, c.RedisConnStr)
 	if err != nil {
-		return fmt.Errorf("create Redis client: %w", err)
+		return fmt.Errorf("failed to mogoredis.NewClient: %w", err)
 	}
 	defer func() {
 		if err := rdb.Close(); err != nil {
@@ -88,7 +88,7 @@ func run() error {
 	mount(humaRegistry)
 
 	if err := mogohttp.Serve(ctx, httpCfg); err != nil {
-		return fmt.Errorf("serve HTTP: %w", err)
+		return fmt.Errorf("failed to mogohttp.Serve: %w", err)
 	}
 
 	slog.Info("Application stopped")

@@ -28,7 +28,7 @@ func TestServeReturnsListenError(t *testing.T) {
 		mogohttp.DefaultConfig(listener.Addr().String(), http.NotFoundHandler()),
 	)
 	require.Error(t, err)
-	assert.ErrorContains(t, err, "serve HTTP")
+	assert.ErrorContains(t, err, "failed to s.ListenAndServe")
 }
 
 func TestServeShutsDownWhenContextIsCanceled(t *testing.T) {

@@ -19,7 +19,8 @@ func NewIssuer(key ed25519.PrivateKey) *Issuer {
 	return &Issuer{key: key}
 }
 
-// Issue creates a new JWT token signed with the provided key.
+// Issue signs c with the issuer's key. Expiration time, issuer, not-before time,
+// and subject must be present and nonzero.
 func (i *Issuer) Issue(c jwt.Claims) (string, error) {
 	exp, err := c.GetExpirationTime()
 	if err != nil || exp == nil || exp.IsZero() {
@@ -48,7 +49,7 @@ func newToken(c jwt.Claims, key ed25519.PrivateKey) (string, error) {
 	t := jwt.NewWithClaims(jwt.SigningMethodEdDSA, c)
 	st, err := t.SignedString(key)
 	if err != nil {
-		return "", fmt.Errorf("failed to sign token: %w", err)
+		return "", fmt.Errorf("failed to t.SignedString: %w", err)
 	}
 
 	return st, nil

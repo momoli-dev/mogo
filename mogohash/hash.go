@@ -12,11 +12,11 @@ type HashedString struct {
 	hash string
 }
 
-// NewHashedString creates a new hash of passed in string.
+// NewHashedString hashes s using the default Argon2id parameters and panics on error.
 func NewHashedString(s string) HashedString {
 	hash, err := argon2id.CreateHash(s, argon2id.DefaultParams)
 	if err != nil {
-		panic(fmt.Errorf("mogohash failed to create hash: %w", err))
+		panic(fmt.Errorf("failed to argon2id.CreateHash: %w", err))
 	}
 
 	return HashedString{

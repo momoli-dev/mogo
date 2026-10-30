@@ -25,17 +25,17 @@ type MigrateParams struct {
 func Migrate(ctx context.Context, p MigrateParams) error {
 	migrationRoot, err := fs.Sub(p.MigrationsFS, p.Directory)
 	if err != nil {
-		return fmt.Errorf("open migrations directory: %w", err)
+		return fmt.Errorf("failed to fs.Sub: %w", err)
 	}
 
 	provider, err := goose.NewProvider(p.Dialect, p.Conn, migrationRoot)
 	if err != nil {
-		return fmt.Errorf("create migration provider: %w", err)
+		return fmt.Errorf("failed to goose.NewProvider: %w", err)
 	}
 
 	res, err := provider.Up(ctx)
 	if err != nil {
-		return fmt.Errorf("run migrations: %w", err)
+		return fmt.Errorf("failed to provider.Up: %w", err)
 	}
 
 	if len(res) == 0 {
@@ -60,12 +60,12 @@ type PostgresMigrateParams struct {
 func MigratePostgres(ctx context.Context, p PostgresMigrateParams) (retErr error) {
 	db, err := sql.Open("pgx", p.ConnURL)
 	if err != nil {
-		return fmt.Errorf("open database: %w", err)
+		return fmt.Errorf("failed to sql.Open: %w", err)
 	}
 	defer func() {
 		closeErr := db.Close()
 		if closeErr != nil {
-			retErr = errors.Join(retErr, fmt.Errorf("close database: %w", closeErr))
+			retErr = errors.Join(retErr, fmt.Errorf("failed to db.Close: %w", closeErr))
 		}
 	}()
 
@@ -76,7 +76,7 @@ func MigratePostgres(ctx context.Context, p PostgresMigrateParams) (retErr error
 		Directory:    "migrations",
 	})
 	if err != nil {
-		return fmt.Errorf("migrate database: %w", err)
+		return fmt.Errorf("failed to Migrate: %w", err)
 	}
 
 	return nil

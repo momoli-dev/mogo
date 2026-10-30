@@ -41,8 +41,8 @@ func DefaultConfig(addr string, handler http.Handler) Config {
 	}
 }
 
-// Serve serves an HTTP server with passed in [config] and graceful
-// shut down support.
+// Serve runs the configured HTTP server until it fails or ctx is canceled.
+// Cancellation triggers graceful shutdown within config.ShutdownTimeout.
 func Serve(ctx context.Context, config Config) error {
 	s := &http.Server{
 		Addr:              config.Addr,
@@ -71,7 +71,7 @@ func Serve(ctx context.Context, config Config) error {
 	case err := <-errChan:
 		if err != nil {
 			config.Logger.Error("Error encountered while serving HTTP server", "addr", config.Addr, "err", err)
-			return fmt.Errorf("serve HTTP: %w", err)
+			return fmt.Errorf("failed to s.ListenAndServe: %w", err)
 		}
 
 		return nil
@@ -84,11 +84,11 @@ func Serve(ctx context.Context, config Config) error {
 		//nolint:contextcheck // shutdownCtx uses new background context since ctx is already done.
 		shutdownErr := s.Shutdown(shutdownCtx)
 		if shutdownErr != nil {
-			shutdownErr = fmt.Errorf("shut down HTTP server: %w", shutdownErr)
+			shutdownErr = fmt.Errorf("failed to s.Shutdown: %w", shutdownErr)
 
 			closeErr := s.Close()
 			if closeErr != nil {
-				closeErr = fmt.Errorf("force close HTTP server: %w", closeErr)
+				closeErr = fmt.Errorf("failed to s.Close: %w", closeErr)
 			}
 
 			return errors.Join(shutdownErr, closeErr)

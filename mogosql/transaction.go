@@ -22,7 +22,7 @@ func WithTx(ctx context.Context, pool *pgxpool.Pool, fn func(pgx.Tx) error) (ret
 	}()
 
 	if err := fn(tx); err != nil {
-		return fmt.Errorf("failed to transaction callback: %w", err)
+		return fmt.Errorf("failed to fn: %w", err)
 	}
 
 	if err := tx.Commit(ctx); err != nil {

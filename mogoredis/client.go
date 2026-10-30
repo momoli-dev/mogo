@@ -15,14 +15,14 @@ import (
 func NewClient(ctx context.Context, connStr string) (*redis.Client, error) {
 	opts, err := redis.ParseURL(connStr)
 	if err != nil {
-		return nil, fmt.Errorf("redis parse connection URL: %w", err)
+		return nil, fmt.Errorf("failed to redis.ParseURL: %w", err)
 	}
 
 	client := redis.NewClient(opts)
 	if err := client.Ping(ctx).Err(); err != nil {
-		pingErr := fmt.Errorf("redis ping: %w", err)
+		pingErr := fmt.Errorf("failed to client.Ping: %w", err)
 		if closeErr := client.Close(); closeErr != nil {
-			return nil, errors.Join(pingErr, fmt.Errorf("redis close: %w", closeErr))
+			return nil, errors.Join(pingErr, fmt.Errorf("failed to client.Close: %w", closeErr))
 		}
 		return nil, pingErr
 	}

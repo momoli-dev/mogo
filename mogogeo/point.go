@@ -19,11 +19,11 @@ type Point struct {
 	Lng float64 `json:"longitude"`
 }
 
-// NewPoint creates a new [Point].
+// NewPoint creates a [Point] using [DefaultSRID], storing longitude before latitude.
 func NewPoint(lat, lng float64) *Point {
 	p, err := geom.NewPoint(geom.XY).SetCoords([]float64{lng, lat})
 	if err != nil {
-		panic(fmt.Errorf("mogogeo failed to create new point: %w", err))
+		panic(fmt.Errorf("failed to SetCoords: %w", err))
 	}
 	p.SetSRID(DefaultSRID)
 
@@ -34,7 +34,8 @@ func NewPoint(lat, lng float64) *Point {
 	}
 }
 
-// NewPointFromData creates a [Point] from a [geom.Point].
+// NewPointFromData copies coordinates from p, which must use [DefaultSRID]
+// and contain at least two coordinates. Additional coordinates are discarded.
 func NewPointFromData(p *geom.Point) (*Point, error) {
 	if p.SRID() != DefaultSRID {
 		return nil, errors.New("point is not in SRID DefaultSRID")
@@ -45,7 +46,7 @@ func NewPointFromData(p *geom.Point) (*Point, error) {
 		return nil, errors.New("point does not have enough coordinates")
 	}
 
-	// Lat and Lng are swapped here because we use SRID DefaultSRID which is lng followed by lat.
+	// The geometry stores longitude before latitude; NewPoint accepts latitude first.
 	return NewPoint(
 		coords[1],
 		coords[0],
