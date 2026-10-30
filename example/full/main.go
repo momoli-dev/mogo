@@ -92,6 +92,7 @@ func run() error {
 	}
 
 	slog.Info("Application stopped")
+
 	return nil
 }
 

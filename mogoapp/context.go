@@ -12,5 +12,6 @@ import (
 // registers signal handling.
 func NewAppCtx() (context.Context, context.CancelFunc) {
 	ctx, cancel := signal.NotifyContext(context.Background(), os.Interrupt, syscall.SIGTERM)
+
 	return ctx, cancel
 }

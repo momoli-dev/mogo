@@ -179,6 +179,7 @@ func TestValidator_ValidateExpiredPreservesOtherFailures(t *testing.T) {
 			if wantErr != nil {
 				require.ErrorIs(t, err, wantErr)
 				require.Nil(t, got)
+
 				return
 			}
 			require.NoError(t, err)

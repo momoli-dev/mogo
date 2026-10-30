@@ -40,6 +40,7 @@ func Migrate(ctx context.Context, p MigrateParams) error {
 
 	if len(res) == 0 {
 		slog.Info("No migrations applied, already up to date")
+
 		return nil
 	}
 

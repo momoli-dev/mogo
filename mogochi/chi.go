@@ -76,6 +76,7 @@ func NewChi(p Config) *chi.Mux {
 					if ip == "" {
 						return "", errors.New("missing client IP")
 					}
+
 					return ip, nil
 				},
 				),

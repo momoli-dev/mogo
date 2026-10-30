@@ -5,7 +5,6 @@ linters:
     - depguard
     - wrapcheck
     - varnamelen
-    - nlreturn
     - wsl
     - wsl_v5
     - godox
@@ -13,9 +12,6 @@ linters:
     - gomodguard
     - exhaustruct
     - noinlineerr
-  enable:
-    - gomodguard_v2
-    - exhaustruct_v5
 
   settings:
     mnd:
@@ -31,6 +27,7 @@ linters:
     cyclop:
       max-complexity: 15
     exhaustruct_v5:
+      allow-empty-returns: true
       ignore-patterns:
         - ^net/http.Client$
         - ^net/http.Cookie$
@@ -90,6 +87,9 @@ linters:
 
   exclusions:
     rules:
+      - linters:
+          - errchkjson
+        text: 'unsafe type `(uuid\.UUID|time\.Time)` found'
       - path: '_test\.go'
         linters:
           - funlen

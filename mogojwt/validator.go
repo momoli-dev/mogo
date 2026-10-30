@@ -53,6 +53,7 @@ func onlyExpirationErrors(err error) bool {
 				return false
 			}
 		}
+
 		return true
 	case interface{ Unwrap() error }:
 		return onlyExpirationErrors(wrapped.Unwrap())

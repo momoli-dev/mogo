@@ -71,6 +71,7 @@ func Serve(ctx context.Context, config Config) error {
 	case err := <-errChan:
 		if err != nil {
 			config.Logger.Error("Error encountered while serving HTTP server", "addr", config.Addr, "err", err)
+
 			return fmt.Errorf("failed to s.ListenAndServe: %w", err)
 		}
 

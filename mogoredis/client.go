@@ -24,6 +24,7 @@ func NewClient(ctx context.Context, connStr string) (*redis.Client, error) {
 		if closeErr := client.Close(); closeErr != nil {
 			return nil, errors.Join(pingErr, fmt.Errorf("failed to client.Close: %w", closeErr))
 		}
+
 		return nil, pingErr
 	}
 

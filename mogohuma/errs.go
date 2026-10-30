@@ -14,12 +14,14 @@ func Err400(err ...error) error {
 // Err401 returns 401 Unauthorized, logging err at debug level without exposing it.
 func Err401(err error) error {
 	slog.Debug("unauthorized", "error", err)
+
 	return huma.Error401Unauthorized("unauthorized")
 }
 
 // Err403 returns 403 Forbidden, logging err at debug level without exposing it.
 func Err403(err error) error {
 	slog.Debug("forbidden", "error", err)
+
 	return huma.Error403Forbidden("forbidden")
 }
 
@@ -31,5 +33,6 @@ func Err404(err error) error {
 // Err500 returns 500 Internal Server Error, logging err at error level without exposing it.
 func Err500(err error) error {
 	slog.Error("internal server error", "error", err)
+
 	return huma.Error500InternalServerError("internal server error")
 }

@@ -30,5 +30,6 @@ func (p *HashedString) Check(s string) bool {
 	if err != nil {
 		return false
 	}
+
 	return match
 }
