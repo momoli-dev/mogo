@@ -66,18 +66,14 @@ func run() error {
 	// Create and configure HTTP server.
 	httpCfg := mogohttp.DefaultConfig(c.ListenAddr, chiMux)
 
-	pgdb, err := mogosql.NewPostgresDB(ctx, mogosql.PostgresDBParams{
+	pool, err := mogosql.NewPostgresPool(ctx, mogosql.PostgresPoolParams{
 		ConnStr:    c.PostgresConnStr,
 		HasPostgis: false,
 	})
 	if err != nil {
-		return fmt.Errorf("create PostgresDB: %w", err)
+		return fmt.Errorf("failed to mogosql.NewPostgresPool: %w", err)
 	}
-	defer func() {
-		if err := pgdb.Close(); err != nil {
-			slog.Error("Failed to close PostgresDB", "err", err)
-		}
-	}()
+	defer pool.Close()
 
 	rdb, err := mogoredis.NewClient(ctx, c.RedisConnStr)
 	if err != nil {

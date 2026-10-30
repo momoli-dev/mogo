@@ -10,9 +10,13 @@ import (
 
 func TestPostgres(t *testing.T) {
 	t.Parallel()
-	database := mogosqltest.NewPostgres(t, example.MigrationFS)
+	pool, _ := mogosqltest.NewPostgres(t, example.MigrationFS)
 	var name string
-	require.NoError(t, database.Pool().QueryRow(t.Context(), "SELECT current_database()").Scan(&name))
+	require.NoError(t, pool.QueryRow(t.Context(), "SELECT current_database()").Scan(&name))
 	require.NotEqual(t, "postgres", name)
-	require.NoError(t, database.Ping(t.Context()))
+	require.NoError(t, pool.Ping(t.Context()))
+
+	var count int
+	require.NoError(t, pool.QueryRow(t.Context(), "SELECT count(*) FROM notes").Scan(&count))
+	require.Zero(t, count)
 }
